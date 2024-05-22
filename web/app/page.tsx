@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { v1 as uuid } from "uuid";
-import { Socket, io } from "socket.io-client";
+import io, { Socket } from "socket.io-client";
 import Peer, { SignalData } from "simple-peer";
 
 export default function Home() {
@@ -62,7 +62,11 @@ export default function Home() {
     });
 
     peer.on("signal", (data) => {
-      socket.current?.emit("callUser", { userToCall: id, signalData: data });
+      socket.current?.emit("callUser", {
+        userToCall: id,
+        signalData: data,
+        from: yourID,
+      });
     });
 
     peer.on("stream", (stream) => {
@@ -112,16 +116,29 @@ export default function Home() {
   let UserVideo;
 
   if (stream) {
-    UserVideo = <video playsInline muted ref={userVideo}></video>;
+    UserVideo = (
+      <video className="" playsInline muted ref={userVideo} autoPlay></video>
+    );
   }
 
   let PartnerVideo;
 
   if (callAccepted) {
-    PartnerVideo = <video playsInline ref={partnerVideo}></video>;
+    PartnerVideo = (
+      <video className="" playsInline ref={partnerVideo} autoPlay></video>
+    );
   }
 
   let incomingCall;
+
+  if (receivingCall) {
+    incomingCall = (
+      <div>
+        <h1>{caller} wants to faceview</h1>
+        <button onClick={acceptCall}>connect</button>
+      </div>
+    );
+  }
 
   function create() {
     const id = uuid();
@@ -130,9 +147,27 @@ export default function Home() {
 
   return (
     <div className="min-h-screen p-20">
-      <button className="bg-black text-white p-2" onClick={create}>
-        create room
-      </button>
+      <div className="flex gap-x-3">
+        {UserVideo}
+
+        {PartnerVideo}
+      </div>
+
+      <div className="flex gap-x-3">
+        {Object.keys(users).map((key) => {
+          if (key === yourID) {
+            return null;
+          }
+
+          return (
+            <button key={key} onClick={() => callPeer(key)}>
+              call {key}
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="">{incomingCall}</div>
     </div>
   );
 }

@@ -14,40 +14,33 @@ const io = new Server(server, {
   },
 });
 
-const rooms = {};
+const users = {};
 
 io.on("connection", (socket) => {
-  socket.on("join room", (roomID) => {
-    if (rooms[roomID]) {
-      rooms[roomID].push(socket.id);
-    } else {
-      rooms[roomID] = [socket.id];
-    }
+  if (!users[socket.id]) {
+    users[socket.id] = socket.id;
+  }
 
-    const anotherUser = rooms[roomID].find((id) => id !== socket.id);
+  socket.emit("your id", socket.id);
 
-    if (anotherUser) {
-      socket.emit("other user", anotherUser);
-      socket.to(anotherUser).emit("user joined", socket.id);
-      console.log("joined");
-    }
+  io.sockets.emit("allusers", users);
+
+  socket.on("disconnect", () => {
+    delete users[socket.id];
   });
 
-  socket.on("offer", (payload) => {
-    io.to(payload.target).emit("offer", payload);
+  socket.on("callUser", (data) => {
+    io.to(data.userToCall).emit("hey", {
+      signal: data.signalData,
+      from: data.from,
+    });
   });
 
-  socket.on("answer", (payload) => {
-    io.to(payload.target).emit("answer", payload);
-  });
-
-  socket.on("ice-candidate", (incoming) => {
-    io.to(incoming.target).emit("ice-candidate", incoming.candidate);
+  socket.on("acceptCall", (data) => {
+    io.to(data.to).emit("callAccepted", data.signal);
   });
 });
 
 server.listen(PORT, () => {
   console.log(`faceview is live on port ${PORT}`);
 });
-
-// startServer();

@@ -1,10 +1,18 @@
 import http from "http";
-import app from "./app";
+import app from "./app.js";
 import { Server } from "socket.io";
+import cors from "cors";
+
+app.use(cors());
 
 const PORT = 7002;
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
 
 const rooms = {};
 
@@ -19,8 +27,9 @@ io.on("connection", (socket) => {
     const anotherUser = rooms[roomID].find((id) => id !== socket.id);
 
     if (anotherUser) {
-      socket.emit("another user", anotherUser);
+      socket.emit("other user", anotherUser);
       socket.to(anotherUser).emit("user joined", socket.id);
+      console.log("joined");
     }
   });
 
@@ -37,8 +46,8 @@ io.on("connection", (socket) => {
   });
 });
 
-async function startServer() {
-  server.listen(`faceview is live on port ${PORT}`);
-}
+server.listen(PORT, () => {
+  console.log(`faceview is live on port ${PORT}`);
+});
 
-startServer();
+// startServer();

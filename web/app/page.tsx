@@ -1,14 +1,10 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { v1 as uuid } from "uuid";
 import io, { Socket } from "socket.io-client";
 import Peer, { Instance, SignalData } from "simple-peer";
 
 export default function Home() {
-  const router = useRouter();
-
   const [me, setMe] = useState("");
   const [stream, setStream] = useState<MediaStream | null | undefined>();
   const [receivingCall, setReceivingCall] = useState(false);
@@ -24,8 +20,10 @@ export default function Home() {
   const socket = useRef<Socket | null>();
   const connectionRef = useRef<Instance | null>();
 
+  const uri = process.env.NEXT_PUBLIC_SERVER_URL;
+
   useEffect(() => {
-    socket.current = io("http://localhost:7002/");
+    socket.current = io(`${uri}`);
 
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
@@ -187,16 +185,7 @@ export default function Home() {
         <p className="text-black">{idToCall}</p>
       </div>
 
-      <div className="mt-5 text-black">
-        {/* {receivingCall && !callAccepted ? (
-          <div>
-            <h1>{name} wants to faceview</h1>
-            <button onClick={answerCall}>connect</button>
-          </div>
-        ) : null} */}
-
-        {incomingCall}
-      </div>
+      <div className="mt-5 text-black">{incomingCall}</div>
     </div>
   );
 }

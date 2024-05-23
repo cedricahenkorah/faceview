@@ -47,6 +47,13 @@ export default function Home() {
     });
   }, []);
 
+  useEffect(() => {
+    if (myVideo.current && stream) {
+      myVideo.current.srcObject = stream;
+      console.log("Assigned stream to myVideo");
+    }
+  }, [stream]);
+
   function callUser(id: string) {
     if (!stream) {
       console.error("MediaStream is null or undefined.");

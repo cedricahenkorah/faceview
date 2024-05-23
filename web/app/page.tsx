@@ -4,22 +4,25 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { v1 as uuid } from "uuid";
 import io, { Socket } from "socket.io-client";
-import Peer, { SignalData } from "simple-peer";
+import Peer, { Instance, SignalData } from "simple-peer";
 
 export default function Home() {
   const router = useRouter();
 
-  const [yourID, setYourID] = useState("");
-  const [users, setUsers] = useState({});
+  const [me, setMe] = useState("");
   const [stream, setStream] = useState<MediaStream | null | undefined>();
   const [receivingCall, setReceivingCall] = useState(false);
   const [caller, setCaller] = useState<string | undefined>("");
   const [callerSignal, setCallerSignal] = useState<SignalData | undefined>();
   const [callAccepted, setCallAccepted] = useState(false);
+  const [idToCall, setIdToCall] = useState("");
+  const [callEnded, setCallEnded] = useState(false);
+  const [name, setName] = useState<string>("");
 
+  const myVideo = useRef<HTMLVideoElement>(null);
   const userVideo = useRef<HTMLVideoElement>(null);
-  const partnerVideo = useRef<HTMLVideoElement>(null);
   const socket = useRef<Socket | null>();
+  const connectionRef = useRef<Instance | null>();
 
   useEffect(() => {
     socket.current = io("http://localhost:7002/");
@@ -29,27 +32,24 @@ export default function Home() {
       .then((stream) => {
         setStream(stream);
 
-        if (userVideo.current) {
-          userVideo.current.srcObject = stream;
+        if (myVideo.current) {
+          myVideo.current.srcObject = stream;
         }
       });
 
-    socket.current.on("yourID", (id) => {
-      setYourID(id);
+    socket.current.on("me", (id) => {
+      setMe(id);
     });
 
-    socket.current.on("allUsers", (users) => {
-      setUsers(users);
-    });
-
-    socket.current.on("hey", (data) => {
+    socket.current.on("callUser", (data) => {
       setReceivingCall(true);
       setCaller(data.from);
+      setName(data.name);
       setCallerSignal(data.signal);
     });
   }, []);
 
-  function callPeer(id: string) {
+  function callUser(id: string) {
     if (!stream) {
       console.error("MediaStream is null or undefined.");
       return;
@@ -65,13 +65,14 @@ export default function Home() {
       socket.current?.emit("callUser", {
         userToCall: id,
         signalData: data,
-        from: yourID,
+        from: me,
+        name: name,
       });
     });
 
     peer.on("stream", (stream) => {
-      if (partnerVideo.current) {
-        partnerVideo.current.srcObject = stream;
+      if (userVideo.current) {
+        userVideo.current.srcObject = stream;
       }
     });
 
@@ -79,9 +80,11 @@ export default function Home() {
       setCallAccepted(true);
       peer.signal(signal);
     });
+
+    connectionRef.current = peer;
   }
 
-  function acceptCall() {
+  function answerCall() {
     if (!stream) {
       console.error("MediaStream is null or undefined.");
       return;
@@ -101,31 +104,38 @@ export default function Home() {
     });
 
     peer.on("signal", (data) => {
-      socket.current?.emit("acceptCall", { signal: data, to: caller });
+      socket.current?.emit("answerCall", { signal: data, to: caller });
     });
 
     peer.on("stream", (stream) => {
-      if (partnerVideo.current) {
-        partnerVideo.current.srcObject = stream;
+      if (userVideo.current) {
+        userVideo.current.srcObject = stream;
       }
     });
 
     peer.signal(callerSignal);
+
+    connectionRef.current = peer;
+  }
+
+  const leaveCall = () => {
+    setCallEnded(true);
+    connectionRef.current?.destroy();
+  };
+
+  let MyVideo;
+
+  if (stream) {
+    MyVideo = (
+      <video className="" playsInline muted ref={myVideo} autoPlay></video>
+    );
   }
 
   let UserVideo;
 
-  if (stream) {
+  if (callAccepted && !callEnded) {
     UserVideo = (
-      <video className="" playsInline muted ref={userVideo} autoPlay></video>
-    );
-  }
-
-  let PartnerVideo;
-
-  if (callAccepted) {
-    PartnerVideo = (
-      <video className="" playsInline ref={partnerVideo} autoPlay></video>
+      <video className="" playsInline ref={userVideo} autoPlay></video>
     );
   }
 
@@ -135,39 +145,58 @@ export default function Home() {
     incomingCall = (
       <div>
         <h1>{caller} wants to faceview</h1>
-        <button onClick={acceptCall}>connect</button>
+        <button onClick={answerCall}>connect</button>
       </div>
     );
-  }
-
-  function create() {
-    const id = uuid();
-    router.push(`/room/${id}`);
   }
 
   return (
     <div className="min-h-screen p-20">
       <div className="flex gap-x-3">
+        {MyVideo}
         {UserVideo}
-
-        {PartnerVideo}
       </div>
 
-      <div className="flex gap-x-3">
-        {Object.keys(users).map((key) => {
-          if (key === yourID) {
-            return null;
-          }
-
-          return (
-            <button key={key} onClick={() => callPeer(key)}>
-              call {key}
-            </button>
-          );
-        })}
+      <div className="flex gap-x-3 mt-5">
+        my id : {me}
+        <p>name</p>
+        <textarea
+          name=""
+          id=""
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="border border-black"
+        />
+        <p>id</p>
+        <textarea
+          name=""
+          id=""
+          value={idToCall}
+          onChange={(e) => setIdToCall(e.target.value)}
+          className="border border-black"
+        />
       </div>
 
-      <div className="">{incomingCall}</div>
+      <div className="mt-3">
+        {callAccepted && !callEnded ? (
+          <button onClick={leaveCall}>end call</button>
+        ) : (
+          <button onClick={() => callUser(idToCall)}>call user</button>
+        )}
+
+        <p className="text-black">{idToCall}</p>
+      </div>
+
+      <div className="mt-5 text-black">
+        {/* {receivingCall && !callAccepted ? (
+          <div>
+            <h1>{name} wants to faceview</h1>
+            <button onClick={answerCall}>connect</button>
+          </div>
+        ) : null} */}
+
+        {incomingCall}
+      </div>
     </div>
   );
 }

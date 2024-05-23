@@ -2,6 +2,7 @@ import http from "http";
 import app from "./app.js";
 import { Server } from "socket.io";
 import cors from "cors";
+import cron from "node-cron";
 
 app.use(cors());
 
@@ -34,6 +35,24 @@ io.on("connection", (socket) => {
     io.to(data.to).emit("callAccepted", data.signal);
   });
 });
+
+async function wakeServer() {
+  const uri = process.env.SERVER_URL;
+
+  try {
+    const response = await fetch(`${uri}`);
+
+    if (response.ok) {
+      console.log("hi server");
+    } else {
+      throw new Error("Server is down");
+    }
+  } catch (error) {
+    console.error("Error waking server:", error);
+  }
+}
+
+cron.schedule("*/6 * * * *", wakeServer);
 
 server.listen(PORT, () => {
   console.log(`Faceview is live on port ${PORT}`);

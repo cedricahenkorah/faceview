@@ -1,13 +1,12 @@
 import http from "http";
-import https from "https";
 import app from "./app.js";
 import { Server } from "socket.io";
 import cors from "cors";
 
 app.use(cors());
 
-const PORT = 7002;
-const server = https.createServer(app);
+const PORT = process.env.PORT || 7002;
+const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: "*",

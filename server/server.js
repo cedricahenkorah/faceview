@@ -14,33 +14,27 @@ const io = new Server(server, {
   },
 });
 
-const users = {};
-
 io.on("connection", (socket) => {
-  if (!users[socket.id]) {
-    users[socket.id] = socket.id;
-  }
-
-  socket.emit("yourID", socket.id);
-
-  io.sockets.emit("allUsers", users);
+  socket.emit("me", socket.id);
 
   socket.on("disconnect", () => {
-    delete users[socket.id];
+    socket.broadcast.emit("callEnded");
   });
 
   socket.on("callUser", (data) => {
-    io.to(data.userToCall).emit("hey", {
+    io.to(data.userToCall).emit("callUser", {
       signal: data.signalData,
       from: data.from,
+      name: data.name,
     });
   });
 
-  socket.on("acceptCall", (data) => {
+  socket.on("answerCall", (data) => {
+    console.log("answered");
     io.to(data.to).emit("callAccepted", data.signal);
   });
 });
 
 server.listen(PORT, () => {
-  console.log(`faceview is live on port ${PORT}`);
+  console.log(`Faceview is live on port ${PORT}`);
 });

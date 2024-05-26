@@ -18,6 +18,7 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
+  console.log("connected");
   socket.emit("me", socket.id);
 
   socket.on("disconnect", () => {
@@ -25,6 +26,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("callUser", (data) => {
+    console.log("calling");
     io.to(data.userToCall).emit("callUser", {
       signal: data.signalData,
       from: data.from,

@@ -1,11 +1,10 @@
-import { config } from "dotenv";
+import "dotenv/config";
 import http from "http";
 import app from "./app.js";
 import { Server } from "socket.io";
 import cors from "cors";
 import cron from "node-cron";
 
-config();
 app.use(cors());
 
 const PORT = process.env.PORT || 7002;

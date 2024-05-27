@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { useState } from "react";
 
 export default function Signup() {
@@ -65,6 +66,13 @@ export default function Signup() {
                 </div>
 
                 <Button className="w-full">Create Account</Button>
+
+                <p className="text-gray-500 text-xs lg:text-sm mt-3 lg:mt-5">
+                  Already have an account{" "}
+                  <Link href="/auth/sign-in">
+                    <span className="font-semibold text-black">Sign in</span>
+                  </Link>
+                </p>
               </div>
             </div>
           </div>

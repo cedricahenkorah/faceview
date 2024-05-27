@@ -1,6 +1,6 @@
 import "dotenv/config";
 import http from "http";
-import app from "./app.js";
+import app from "./app";
 import { Server } from "socket.io";
 import cors from "cors";
 import cron from "node-cron";

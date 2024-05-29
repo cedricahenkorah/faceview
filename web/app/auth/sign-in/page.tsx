@@ -1,12 +1,35 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { FormEvent, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function SignIn() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
+
+  const handleLogin = async (e: FormEvent) => {
+    e.preventDefault();
+
+    const data = { username, password };
+
+    const response = await toast.promise(
+      signIn("credentials", { ...data, redirect: false }),
+      {
+        loading: "Hang on, just a moment...",
+        success: "You have been logged in successfully",
+        error: "An error occurred. Sorry, try again later.",
+      }
+    );
+
+    if (!response?.error) {
+      router.push("/call");
+    }
+  };
 
   return (
     <div className="min-h-screen flex w-full">
@@ -19,7 +42,7 @@ export default function SignIn() {
 
         <div className="w-2/5 relative text-black flex">
           <div className="flex justify-center items-center w-full">
-            <div className="flex flex-col">
+            <form className="flex flex-col" onSubmit={handleLogin}>
               <h1 className="font-bold text-base lg:text-xl">
                 Sign In to <span className="text-blue-700">faceview</span>
               </h1>
@@ -56,7 +79,9 @@ export default function SignIn() {
                   Forgot Password?
                 </p>
 
-                <Button className="w-full">Login</Button>
+                <Button className="w-full" type="submit">
+                  Login
+                </Button>
 
                 <p className="text-gray-500 text-xs lg:text-sm mt-3 lg:mt-5">
                   Don&apos;t have an account{" "}
@@ -65,7 +90,7 @@ export default function SignIn() {
                   </Link>
                 </p>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </div>

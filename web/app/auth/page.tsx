@@ -1,13 +1,42 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { CreateUser } from "@/lib/users";
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { ChangeEvent, FormEvent, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function Signup() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  const router = useRouter();
+
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement>,
+    setState: (value: string) => void
+  ) => {
+    setState(e.target.value);
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    const data = { email, username, password };
+
+    const response = await toast.promise(CreateUser(data), {
+      loading: "Hang on, we're setting up your account",
+      success: "Your account has been created successfully",
+      error:
+        "An error occured while creating your account. Please try again later",
+    });
+
+    if (!response?.error) {
+      router.push("/auth/sign-in");
+    }
+  };
 
   return (
     <div className="min-h-screen flex w-full">
@@ -28,7 +57,7 @@ export default function Signup() {
                 Start connecting with friends today on faceview
               </p>
 
-              <div className="mt-10 gap-y-5">
+              <form className="mt-10 gap-y-5" onSubmit={handleSubmit}>
                 <div className="flex flex-col">
                   <label className="text-xs lg:text-sm font-semibold">
                     Email
@@ -36,7 +65,7 @@ export default function Signup() {
                   <input
                     type="email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => handleInputChange(e, setEmail)}
                     className="w-full mb-3 lg:mb-5 mt-2 p-2 lg:py-2 lg:px-2 rounded-md border border-gray-200 focus:ring-offset-0 focus:ring-0 text-sm"
                   />
                 </div>
@@ -48,7 +77,7 @@ export default function Signup() {
                   <input
                     type="text"
                     value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    onChange={(e) => handleInputChange(e, setUsername)}
                     className="w-full mb-3 lg:mb-5 mt-2 p-2 lg:py-2 lg:px-2 rounded-md border border-gray-200 focus:ring-offset-0 focus:ring-0 text-sm"
                   />
                 </div>
@@ -60,12 +89,14 @@ export default function Signup() {
                   <input
                     type="password"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => handleInputChange(e, setPassword)}
                     className="w-full mb-3 lg:mb-5 mt-2 p-2 lg:py-2 lg:px-2 rounded-md border border-gray-200 focus:ring-offset-0 focus:ring-0 text-sm"
                   />
                 </div>
 
-                <Button className="w-full">Create Account</Button>
+                <Button className="w-full" type="submit">
+                  Create Account
+                </Button>
 
                 <p className="text-gray-500 text-xs lg:text-sm mt-3 lg:mt-5">
                   Already have an account{" "}
@@ -73,7 +104,7 @@ export default function Signup() {
                     <span className="font-semibold text-black">Sign in</span>
                   </Link>
                 </p>
-              </div>
+              </form>
             </div>
           </div>
         </div>

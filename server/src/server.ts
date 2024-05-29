@@ -4,8 +4,8 @@ import app from "./app";
 import { Server } from "socket.io";
 import cors from "cors";
 import cron from "node-cron";
-
-app.use(cors());
+import { connectDB } from "./config/dbConnection";
+import mongoose from "mongoose";
 
 const PORT = process.env.PORT || 7002;
 const server = http.createServer(app);
@@ -39,6 +39,14 @@ io.on("connection", (socket) => {
   });
 });
 
+mongoose.connection.once("open", () => {
+  console.log("MongoDB connection ready");
+});
+
+mongoose.connection.on("error", (err: any) => {
+  console.log("MongoDB connection error", err);
+});
+
 async function wakeServer() {
   const uri = process.env.SERVER_URL;
 
@@ -57,6 +65,12 @@ async function wakeServer() {
 
 cron.schedule("*/6 * * * *", wakeServer);
 
-server.listen(PORT, () => {
-  console.log(`Faceview is live on port ${PORT}`);
-});
+async function startServer() {
+  connectDB();
+
+  server.listen(PORT, () => {
+    console.log(`Faceview is live on port ${PORT}`);
+  });
+}
+
+startServer();

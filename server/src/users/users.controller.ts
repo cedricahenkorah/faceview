@@ -103,3 +103,38 @@ export async function sendFriendRequest(req: Request, res: Response) {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 }
+export async function acceptFriendRequest(req: Request, res: Response) {
+  const { id } = req.params;
+  const { username } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(id))
+    return res.status(400).json({ message: "Invalid user ID" });
+
+  if (!username)
+    return res.status(400).json({ message: "Username has not been provided" });
+
+  try {
+    const userA = await User.findOneAndUpdate(
+      { username },
+      { $pull: { friendRequestsReceived: id }, $push: { friends: id } },
+      { new: true }
+    );
+
+    const userB = await User.findByIdAndUpdate(id, {
+      $pull: { friendRequestsSent: userA?._id },
+      $push: { friends: userA?._id },
+    });
+
+    if (!userA || !userB)
+      return res
+        .status(400)
+        .json({ message: "Failed to accept this user as a friend" });
+
+    return res.status(200).json({
+      userA,
+      message: "You successfully added this user as your friend",
+    });
+  } catch (error) {
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+}

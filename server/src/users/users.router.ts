@@ -1,8 +1,9 @@
 import express from "express";
-import { createUser } from "./users.controller";
+  sendFriendRequest,
 
 const userRouter = express.Router();
 
 userRouter.post("/", createUser);
+userRouter.post("/send-friend-request/:id", sendFriendRequest);
 
 export default userRouter;

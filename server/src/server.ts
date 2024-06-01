@@ -1,8 +1,7 @@
-import "dotenv/config";
+require("dotenv").config();
 import http from "http";
 import app from "./app";
 import { Server } from "socket.io";
-import cors from "cors";
 import cron from "node-cron";
 import { connectDB } from "./config/dbConnection";
 import mongoose from "mongoose";

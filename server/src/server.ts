@@ -1,4 +1,4 @@
-require("dotenv").config();
+import "dotenv/config";
 import http from "http";
 import app from "./app";
 import { Server } from "socket.io";

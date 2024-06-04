@@ -46,23 +46,23 @@ mongoose.connection.on("error", (err: any) => {
   console.log("MongoDB connection error", err);
 });
 
-async function wakeServer() {
-  const uri = process.env.SERVER_URL;
+// async function wakeServer() {
+//   const uri = process.env.SERVER_URL;
 
-  try {
-    const response = await fetch(`${uri}`);
+//   try {
+//     const response = await fetch(`${uri}`);
 
-    if (response.ok) {
-      console.log("hi server");
-    } else {
-      throw new Error("Server is down");
-    }
-  } catch (error) {
-    console.error("Error waking server:", error);
-  }
-}
+//     if (response.ok) {
+//       console.log("hi server");
+//     } else {
+//       throw new Error("Server is down");
+//     }
+//   } catch (error) {
+//     console.error("Error waking server:", error);
+//   }
+// }
 
-cron.schedule("*/6 * * * *", wakeServer);
+// cron.schedule("*/6 * * * *", wakeServer);
 
 async function startServer() {
   connectDB();

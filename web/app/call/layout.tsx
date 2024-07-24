@@ -1,4 +1,4 @@
-export default function RoomLayout({
+export default function CallLayout({
   children,
 }: {
   children: React.ReactNode;

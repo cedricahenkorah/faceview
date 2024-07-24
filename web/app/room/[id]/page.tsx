@@ -167,9 +167,9 @@ export default function Room({ params }: { params: { id: string } }) {
   }
 
   return (
-    <div className="min-h-screen w-full bg-gray-100">
-      <video autoPlay ref={userVideo}></video>
-      <video autoPlay ref={partnerVideo}></video>
+    <div className="flex min-h-screen w-full bg-gray-100">
+      <video autoPlay ref={userVideo} className="w-1/2"></video>
+      <video autoPlay ref={partnerVideo} className="w-1/2"></video>
     </div>
   );
 }

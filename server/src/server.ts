@@ -5,7 +5,7 @@ import cors from "cors";
 
 app.use(cors());
 
-const PORT = 7002;
+const PORT = process.env.PORT || 7002;
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {

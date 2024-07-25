@@ -11,6 +11,8 @@ export default function Room({ params }: { params: { id: string } }) {
   const otherUser = useRef<string | null>(null);
   const userStream = useRef<MediaStream | null>(null);
 
+  const uri = process.env.NEXT_PUBLIC_SERVER_URL;
+
   useEffect(() => {
     navigator.mediaDevices
       .getUserMedia({ audio: true, video: true })
@@ -21,7 +23,7 @@ export default function Room({ params }: { params: { id: string } }) {
 
         userStream.current = stream;
 
-        socketRef.current = io("http://localhost:7002/");
+        socketRef.current = io(`${uri}`);
 
         socketRef.current.emit("join room", params.id);
         console.log("Joining room:", params.id);

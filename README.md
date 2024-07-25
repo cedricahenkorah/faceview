@@ -4,14 +4,66 @@
 
 A video call web application that built using the webRTC. Still a work in progress.
 
-## Usage
+## Get started
 
-- Create a user account
+- Start a new meeting / create a meeting for later
 
-- Log in and input your name or username in the name input field
+- Share the meeting ID with the person you intend to call
 
-- For now, to make a call, copy your ID and paste it in the ID input field in another open tab of the application or in another user's dashboard.
+- Join the meeting room and begin the video call / Enter the meeting ID to join the video room
 
-- Then click on the call user in the tab you pasted the ID in.
+## Installation.
 
-- Accept the call, this starts the video call.
+1. **Clone the repository**
+
+```shell
+git clone git@github.com:cedricahenkorah/faceview.git
+```
+
+2. **Navigate to the project directory**
+
+```shell
+cd faceview
+```
+
+3. **Install packages**
+
+```shell
+cd web
+```
+
+```shell
+npm install
+```
+
+```shell
+cd ..
+```
+
+```shell
+cd server
+```
+
+```shell
+npm install
+```
+
+4. **Run the project**
+
+```shell
+cd server
+```
+
+```shell
+npm run dev
+```
+
+- In a separate terminal do this
+
+```shell
+cd web
+```
+
+```shell
+npm run dev
+```

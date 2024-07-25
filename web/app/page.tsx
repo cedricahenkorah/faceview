@@ -67,12 +67,12 @@ export default function Home() {
     <div className="min-h-screen">
       <section className="min-h-screen">
         <Navbar />
-        <Toaster />
+        <Toaster position="top-right" reverseOrder={false} />
 
         <div className="relative isolate px-6 pt-10 lg:px-8">
           <div className="mx-auto max-w-3xl">
             <div className="text-center">
-              <h1 className="text-xl font-semibold tracking-tight text-gray-900 sm:text-6xl">
+              <h1 className="text-xl md:text-3xl lg:text-5xl font-semibold tracking-tight text-gray-900">
                 Stay Connected with FaceView
               </h1>
 
@@ -120,7 +120,7 @@ export default function Home() {
             </div>
 
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogContent className="sm:max-w-md">
+              <DialogContent className="max-w-xs sm:max-w-md">
                 <DialogHeader>
                   <DialogTitle>Share link</DialogTitle>
                   <DialogDescription>

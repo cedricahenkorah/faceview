@@ -174,7 +174,7 @@ export default function Room({ params }: { params: { id: string } }) {
       <Navbar />
 
       <div className="flex flex-col md:flex-row w-full m-auto lg:max-w-7xl max-w-3xl px-6 pt-3 md:pt-5 lg:pt-10 lg:px-8 gap-x-1 md:gap-x-3 lg:gap-x-5 gap-y-3">
-        <video autoPlay ref={userVideo} className="w-full lg:w-1/2"></video>
+        <video autoPlay muted ref={userVideo} className="w-full lg:w-1/2"></video>
         <video autoPlay ref={partnerVideo} className="w-full lg:w-1/2"></video>
       </div>
     </div>

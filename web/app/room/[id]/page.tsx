@@ -47,7 +47,46 @@ export default function Room({ params }: { params: { id: string } }) {
         socketRef.current.on("ice-candidate", handleNewICECandidateMsg);
       })
       .catch((e) => console.log(e));
+  
+      window.addEventListener("beforeunload", handleBeforeUnload);
+
+      return () => {
+        console.log("close page");
+        window.removeEventListener("beforeunload", handleBeforeUnload);
+        handleCancelCall();
+      }
+
   }, []);
+
+  const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+    console.log("Page is about to be refreshed");
+    socketRef.current?.emit("handleDisconnectCleanUp", params.id);
+    event.preventDefault();
+  };
+
+  function handleCancelCall() {
+    if (peerRef.current) {
+      console.log("Closing peer connection");
+      peerRef.current.close();
+      peerRef.current = null;
+    }
+
+    if (userStream.current) {
+      console.log("Stopping user media tracks");
+      userStream.current.getTracks().forEach((track) => track.stop());
+      userStream.current = null;
+    }
+
+    if (socketRef.current?.connected) {
+      console.log("Disconnecting socket");
+      socketRef.current.emit("handleDisconnectCleanUp", params.id, () => {
+        console.log("Cleanup event sent, now disconnecting socket");
+        socketRef.current?.disconnect();
+      });
+    } else {
+      console.log("Socket is already disconnected");
+    }
+  }
 
   function callUser(userID: string) {
     console.log("Calling user:", userID);
@@ -174,8 +213,8 @@ export default function Room({ params }: { params: { id: string } }) {
       <Navbar />
 
       <div className="flex flex-col md:flex-row w-full m-auto lg:max-w-7xl max-w-3xl px-6 pt-3 md:pt-5 lg:pt-10 lg:px-8 gap-x-1 md:gap-x-3 lg:gap-x-5 gap-y-3">
-        <video autoPlay muted ref={userVideo} className="w-full lg:w-1/2"></video>
-        <video autoPlay ref={partnerVideo} className="w-full lg:w-1/2"></video>
+        <video autoPlay  style={{ transform: "scaleX(-1)" }} muted ref={userVideo} className="w-full lg:w-1/2"></video>
+        <video autoPlay  style={{ transform: "scaleX(-1)" }} ref={partnerVideo} className="w-full lg:w-1/2"></video>
       </div>
     </div>
   );

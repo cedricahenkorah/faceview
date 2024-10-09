@@ -33,6 +33,19 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("handleSocketDisconnect", (roomId, callback)=>{
+    let index = -1
+    if (rooms[roomId]){
+      index = rooms[roomId].indexOf(socket.id)
+    }
+    if (index > -1) {
+      rooms[roomId].splice(index, 1)
+      console.log("Current Sessions: "+rooms[roomId])
+    }
+
+    if (callback) callback()
+  })
+
   socket.on("offer", (payload) => {
     io.to(payload.target).emit("offer", payload);
   });

@@ -1,7 +1,7 @@
 "use client";
 
 import { Navbar } from "@/app/_components/navbar";
-import { useEffect, useRef, MutableRefObject } from "react";
+import { useEffect, useRef } from "react";
 import io, { Socket } from "socket.io-client";
 
 export default function Room({ params }: { params: { id: string } }) {
@@ -47,15 +47,14 @@ export default function Room({ params }: { params: { id: string } }) {
         socketRef.current.on("ice-candidate", handleNewICECandidateMsg);
       })
       .catch((e) => console.log(e));
-  
-      window.addEventListener("beforeunload", handleBeforeUnload);
 
-      return () => {
-        console.log("close page");
-        window.removeEventListener("beforeunload", handleBeforeUnload);
-        handleCancelCall();
-      }
+    window.addEventListener("beforeunload", handleBeforeUnload);
 
+    return () => {
+      console.log("close page");
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      handleCancelCall();
+    };
   }, []);
 
   const handleBeforeUnload = (event: BeforeUnloadEvent) => {
@@ -213,8 +212,20 @@ export default function Room({ params }: { params: { id: string } }) {
       <Navbar />
 
       <div className="flex flex-col md:flex-row w-full m-auto lg:max-w-7xl max-w-3xl px-6 pt-3 md:pt-5 lg:pt-10 lg:px-8 gap-x-1 md:gap-x-3 lg:gap-x-5 gap-y-3">
-        <video autoPlay  style={{ transform: "scaleX(-1)" }} muted ref={userVideo} className="w-full lg:w-1/2"></video>
-        <video autoPlay  style={{ transform: "scaleX(-1)" }} ref={partnerVideo} className="w-full lg:w-1/2"></video>
+        <video
+          autoPlay
+          style={{ transform: "scaleX(-1)" }}
+          muted
+          ref={userVideo}
+          className="w-full lg:w-1/2"
+        ></video>
+
+        <video
+          autoPlay
+          style={{ transform: "scaleX(-1)" }}
+          ref={partnerVideo}
+          className="w-full lg:w-1/2"
+        ></video>
       </div>
     </div>
   );

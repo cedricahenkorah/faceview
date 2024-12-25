@@ -19,6 +19,7 @@
     "lucide-react": "^0.414.0",
     "next": "14.2.3",
     "next-nprogress-bar": "^2.3.12",
+    "peerjs": "^1.5.4",
     "react": "^18",
     "react-dom": "^18",
     "react-hot-toast": "^2.4.1",

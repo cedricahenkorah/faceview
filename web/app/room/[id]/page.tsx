@@ -11,6 +11,7 @@ export default function Room({ params }: { params: { id: string } }) {
   const socketRef = useRef<Socket | null>(null);
   const otherUser = useRef<string | null>(null);
   const userStream = useRef<MediaStream | null>(null);
+  const [isAudioMuted, setIsAudioMuted] = useState(false);
 
   const uri = process.env.NEXT_PUBLIC_SERVER_URL;
 
@@ -212,6 +213,16 @@ export default function Room({ params }: { params: { id: string } }) {
     console.log("Received remote track");
     if (partnerVideo.current) {
       partnerVideo.current.srcObject = e.streams[0];
+    }
+  }
+
+  function toggleAudio() {
+    if (userStream.current) {
+      userStream.current.getAudioTracks().forEach((track) => {
+        track.enabled = !track.enabled;
+      });
+
+      setIsAudioMuted(!isAudioMuted);
     }
   }
   function endCall() {

@@ -13,6 +13,7 @@ export default function Room({ params }: { params: { id: string } }) {
   const userStream = useRef<MediaStream | null>(null);
   const [isAudioMuted, setIsAudioMuted] = useState(false);
   const [isPartnerMuted, setIsPartnerMuted] = useState(false);
+  const [isVideoOff, setIsVideoOff] = useState(false);
 
   const uri = process.env.NEXT_PUBLIC_SERVER_URL;
 
@@ -233,6 +234,17 @@ export default function Room({ params }: { params: { id: string } }) {
       setIsPartnerMuted(!isPartnerMuted);
     }
   }
+
+  function toggleVideo() {
+    if (userStream.current) {
+      userStream.current.getVideoTracks().forEach((track) => {
+        track.enabled = !track.enabled;
+      });
+
+      setIsVideoOff(!isVideoOff);
+    }
+  }
+
   function switchCamera() {
     if (userStream.current) {
       userStream.current.getVideoTracks().forEach((track) => {

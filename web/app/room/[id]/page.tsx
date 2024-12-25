@@ -270,24 +270,98 @@ export default function Room({ params }: { params: { id: string } }) {
   }
 
   return (
-    <div className="min-h-screen w-full">
+    <div className="min-h-screen w-full flex flex-col">
       <Navbar />
 
-      <div className="flex flex-col md:flex-row w-full m-auto lg:max-w-7xl max-w-3xl px-6 pt-3 md:pt-5 lg:pt-10 lg:px-8 gap-x-1 md:gap-x-3 lg:gap-x-5 gap-y-3">
+      <div className="flex flex-col md:flex-row w-full flex-grow m-auto lg:max-w-7xl max-w-3xl px-5 pt-3 md:pt-5 gap-x-1 md:gap-x-3 lg:gap-x-5 gap-y-3">
+        <div className="bg-white rounded-lg shadow-lg w-1/2 max-w-4xl aspect-video relative mb-10">
         <video
+            ref={userVideo}
           autoPlay
+            playsInline
+            className="w-full h-full object-cover rounded-lg"
           style={{ transform: "scaleX(-1)" }}
-          muted
-          ref={userVideo}
-          className="w-full lg:w-1/2"
-        ></video>
+          />
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-4 bg-gray-800 bg-opacity-50 rounded-full p-2">
+            <Button
+              onClick={toggleAudio}
+              variant="ghost"
+              size="icon"
+              className={`rounded-full ${
+                isAudioMuted
+                  ? "bg-red-500 hover:bg-red-600"
+                  : "bg-white hover:bg-gray-200"
+              }`}
+            >
+              {isAudioMuted ? (
+                <MicOff size={20} className="text-white" />
+              ) : (
+                <Mic size={20} />
+              )}
+            </Button>
+            <Button
+              onClick={toggleVideo}
+              variant="ghost"
+              size="icon"
+              className={`rounded-full ${
+                isVideoOff
+                  ? "bg-red-500 hover:bg-red-600"
+                  : "bg-white hover:bg-gray-200"
+              }`}
+            >
+              {isVideoOff ? (
+                <VideoOff size={20} className="text-white" />
+              ) : (
+                <Video size={20} />
+              )}
+            </Button>
+            <Button
+              onClick={switchCamera}
+              variant="ghost"
+              size="icon"
+              className="rounded-full bg-white hover:bg-gray-200"
+              // disabled={cameras.length < 2}
+            >
+              <SwitchCamera size={20} />
+            </Button>
+            <Button
+              onClick={endCall}
+              variant="ghost"
+              size="icon"
+              className="rounded-full bg-red-500 hover:bg-red-600"
+            >
+              <PhoneOff size={20} className="text-white" />
+            </Button>
+          </div>
+        </div>
 
+        <div className="bg-white rounded-lg shadow-lg w-1/2 max-w-4xl aspect-video relative mb-10">
         <video
+            ref={partnerVideo}
           autoPlay
+            playsInline
+            className="w-full h-full object-cover rounded-lg"
           style={{ transform: "scaleX(-1)" }}
-          ref={partnerVideo}
-          className="w-full lg:w-1/2"
-        ></video>
+          />
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-4 bg-gray-800 bg-opacity-50 rounded-full p-2">
+            <Button
+              onClick={togglePartnerAudio}
+              variant="ghost"
+              size="icon"
+              className={`rounded-full ${
+                isPartnerMuted
+                  ? "bg-red-500 hover:bg-red-600"
+                  : "bg-white hover:bg-gray-200"
+              }`}
+            >
+              {isPartnerMuted ? (
+                <MicOff size={20} className="text-white" />
+              ) : (
+                <Mic size={20} />
+              )}
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

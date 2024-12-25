@@ -45,6 +45,14 @@ export default function Room({ params }: { params: { id: string } }) {
         socketRef.current.on("answer", handleAnswer);
 
         socketRef.current.on("ice-candidate", handleNewICECandidateMsg);
+
+        // Listen for when the other user disconnects
+        socketRef.current?.on("user disconnected", (userID) => {
+          console.log(`User disconnected: ${userID}`);
+          if (partnerVideo.current) {
+            partnerVideo.current.srcObject = null; // Clear the video
+          }
+        });
       })
       .catch((e) => console.log(e));
 
@@ -205,6 +213,10 @@ export default function Room({ params }: { params: { id: string } }) {
     if (partnerVideo.current) {
       partnerVideo.current.srcObject = e.streams[0];
     }
+  }
+  function endCall() {
+    handleCancelCall();
+    window.location.href = "/";
   }
 
   return (

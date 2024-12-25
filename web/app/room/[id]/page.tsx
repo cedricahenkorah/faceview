@@ -233,6 +233,24 @@ export default function Room({ params }: { params: { id: string } }) {
       setIsPartnerMuted(!isPartnerMuted);
     }
   }
+  function switchCamera() {
+    if (userStream.current) {
+      userStream.current.getVideoTracks().forEach((track) => {
+        track.stop();
+      });
+
+      navigator.mediaDevices
+        .getUserMedia({ video: { facingMode: "environment" } })
+        .then((stream) => {
+          const newVideoTrack = stream.getVideoTracks()[0];
+          userStream.current?.addTrack(newVideoTrack);
+          if (userVideo.current) {
+            userVideo.current.srcObject = userStream.current;
+          }
+        })
+        .catch((e) => console.log(e));
+    }
+  }
 
   function endCall() {
     handleCancelCall();

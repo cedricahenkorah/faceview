@@ -287,7 +287,7 @@ export default function Room({ params }: { params: { id: string } }) {
   }
 
   return (
-    <div className="min-h-screen w-full flex flex-col">
+    <div className="min-h-screen w-full flex flex-col bg-gradient-to-br from-gray-900 to-gray-800 text-white">
       <Navbar />
 
       <div className="flex flex-col md:flex-row w-full flex-grow m-auto lg:max-w-7xl max-w-3xl px-5 pt-3 md:pt-5 gap-x-1 md:gap-x-3 lg:gap-x-5 gap-y-3">
@@ -307,13 +307,13 @@ export default function Room({ params }: { params: { id: string } }) {
               className={`rounded-full ${
                 isAudioMuted
                   ? "bg-red-500 hover:bg-red-600"
-                  : "bg-white hover:bg-gray-200"
+                  : "bg-green-500 hover:bg-gray-200"
               }`}
             >
               {isAudioMuted ? (
                 <MicOff size={20} className="text-white" />
               ) : (
-                <Mic size={20} />
+                <Mic size={20} className="text-white" />
               )}
             </Button>
             <Button
@@ -323,20 +323,20 @@ export default function Room({ params }: { params: { id: string } }) {
               className={`rounded-full ${
                 isVideoOff
                   ? "bg-red-500 hover:bg-red-600"
-                  : "bg-white hover:bg-gray-200"
+                  : "bg-green-500 hover:bg-gray-200"
               }`}
             >
               {isVideoOff ? (
                 <VideoOff size={20} className="text-white" />
               ) : (
-                <Video size={20} />
+                <Video size={20} className="text-white" />
               )}
             </Button>
             <Button
               onClick={switchCamera}
               variant="ghost"
               size="icon"
-              className="rounded-full bg-white hover:bg-gray-200"
+              className="rounded-full bg-blue-500 hover:bg-gray-200"
               // disabled={cameras.length < 2}
             >
               <SwitchCamera size={20} />
@@ -368,13 +368,13 @@ export default function Room({ params }: { params: { id: string } }) {
               className={`rounded-full ${
                 isPartnerMuted
                   ? "bg-red-500 hover:bg-red-600"
-                  : "bg-white hover:bg-gray-200"
+                  : "bg-green-500 hover:bg-gray-200"
               }`}
             >
               {isPartnerMuted ? (
                 <MicOff size={20} className="text-white" />
               ) : (
-                <Mic size={20} />
+                <Mic size={20} className="text-white" />
               )}
             </Button>
           </div>

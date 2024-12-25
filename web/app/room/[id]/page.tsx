@@ -12,6 +12,7 @@ export default function Room({ params }: { params: { id: string } }) {
   const otherUser = useRef<string | null>(null);
   const userStream = useRef<MediaStream | null>(null);
   const [isAudioMuted, setIsAudioMuted] = useState(false);
+  const [isPartnerMuted, setIsPartnerMuted] = useState(false);
 
   const uri = process.env.NEXT_PUBLIC_SERVER_URL;
 
@@ -225,6 +226,14 @@ export default function Room({ params }: { params: { id: string } }) {
       setIsAudioMuted(!isAudioMuted);
     }
   }
+
+  function togglePartnerAudio() {
+    if (partnerVideo.current) {
+      partnerVideo.current.muted = !partnerVideo.current.muted;
+      setIsPartnerMuted(!isPartnerMuted);
+    }
+  }
+
   function endCall() {
     handleCancelCall();
     window.location.href = "/";

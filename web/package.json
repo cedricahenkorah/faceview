@@ -17,7 +17,7 @@
     "clipboard": "^2.0.11",
     "clsx": "^2.1.1",
     "lucide-react": "^0.414.0",
-    "next": "14.2.3",
+    "next": "15.5.10",
     "next-nprogress-bar": "^2.3.12",
     "peerjs": "^1.5.4",
     "react": "^18",
